@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="FitnessHub CRM — Naan Mudhalvan Project. Complete gym management system.">
+  <title>FitnessHub CRM — Naan Mudhalvan</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ═══════════════════════════════════════
+       SIDEBAR
+  ════════════════════════════════════════ -->
+  <nav class="sidebar" id="sidebar">
+
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <div class="logo-icon">🏋️</div>
+        <div>
+          <div class="logo-text">FitnessHub</div>
+          <div class="logo-sub">CRM Platform</div>
+        </div>
+      </div>
+      <div class="nm-badge">◆ Naan Mudhalvan</div>
+    </div>
+
+    <div class="nav-section">Main</div>
+    <div class="nav-item active" data-page="dashboard">
+      <span class="nav-icon">📊</span> Dashboard
+    </div>
+    <div class="nav-item" data-page="members">
+      <span class="nav-icon">👥</span> Members
+      <span class="nav-badge">38</span>
+    </div>
+    <div class="nav-item" data-page="trainers">
+      <span class="nav-icon">🏅</span> Trainers
+    </div>
+    <div class="nav-item" data-page="schedule">
+      <span class="nav-icon">📅</span> Schedule
+    </div>
+
+    <div class="nav-section">Business</div>
+    <div class="nav-item" data-page="plans">
+      <span class="nav-icon">💳</span> Plans &amp; Pricing
+    </div>
+    <div class="nav-item" data-page="payments">
+      <span class="nav-icon">💰</span> Payments
+    </div>
+    <div class="nav-item" data-page="reports">
+      <span class="nav-icon">📈</span> Reports
+    </div>
+
+    <div class="nav-section">System</div>
+    <div class="nav-item" data-page="settings">
+      <span class="nav-icon">⚙️</span> Settings
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="avatar">AK</div>
+        <div>
+          <div class="sidebar-user-name">Admin Kumar</div>
+          <div class="sidebar-user-role">Gym Manager</div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════════
+       MAIN AREA
+  ════════════════════════════════════════ -->
+  <div class="main">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <span class="page-title" id="page-title">Dashboard</span>
+      </div>
+      <div class="topbar-right">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="global-search" placeholder="Search members, trainers…">
+        </div>
+        <button class="btn btn-primary" onclick="App.openModal()">
+          + Add Member
+        </button>
+        <div class="avatar" title="Admin Kumar">AK</div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- ═══════════════════════ DASHBOARD ═══════════ -->
+      <div class="page active" id="page-dashboard">
+
+        <!-- Stats Row -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon" style="background:var(--green-light)">👥</div>
+            <div class="stat-label">Total Members</div>
+            <div class="stat-value text-green" id="stat-total-members">1,284</div>
+            <div class="stat-change up">↑ 12% from last month</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:var(--blue-light)">🏃</div>
+            <div class="stat-label">Active Today</div>
+            <div class="stat-value" id="stat-active-today">247</div>
+            <div class="stat-change up">↑ 8% vs yesterday</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:var(--amber-light)">💰</div>
+            <div class="stat-label">Monthly Revenue</div>
+            <div class="stat-value" style="color:var(--amber)" id="stat-monthly-revenue">₹4.8L</div>
+            <div class="stat-change up">↑ 18% this month</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:var(--coral-light)">⚠️</div>
+            <div class="stat-label">Renewals Due</div>
+            <div class="stat-value text-coral" id="stat-renewals-due">38</div>
+            <div class="stat-change down">↓ Action needed</div>
+          </div>
+        </div>
+
+        <!-- Chart + Split -->
+        <div class="grid-2-1">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Member growth — 2025</div>
+                <div class="card-sub">Monthly new enrollments</div>
+              </div>
+              <select class="form-control" style="width:120px;font-size:12px">
+                <option>Monthly</option><option>Weekly</option>
+              </select>
+            </div>
+            <div class="chart-wrap">
+              <div class="chart-bars" id="chart-bars"></div>
+              <div class="chart-labels" id="chart-labels"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Membership split</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:14px" id="membership-split"></div>
+            <div class="divider"></div>
+            <div class="card-title" style="margin-bottom:10px">Top classes today</div>
+            <div id="top-classes"></div>
+          </div>
+        </div>
+
+        <!-- Recent Members + Activity -->
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Recent enrollments</div>
+              <button class="btn btn-sm" onclick="App.showPage('members', document.querySelector('[data-page=members]'))">See all →</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Member</th>
+                    <th>Plan</th>
+                    <th>Joined</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="recent-members-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Recent activity</div>
+            </div>
+            <div id="activity-feed"></div>
+          </div>
+        </div>
+
+      </div><!-- /dashboard -->
+
+
+      <!-- ═══════════════════════ MEMBERS ═════════════ -->
+      <div class="page" id="page-members">
+
+        <div class="page-header">
+          <div class="page-header-left">
+            <h2>Members</h2>
+            <p>Manage all gym members, plans, and statuses</p>
+          </div>
+          <button class="btn btn-primary" onclick="App.openModal()">+ Add Member</button>
+        </div>
+
+        <div class="filter-chips">
+          <div class="chip member-chip active" onclick="Members.filter('all', this)">All (1,284)</div>
+          <div class="chip member-chip" onclick="Members.filter('active', this)">Active (1,102)</div>
+          <div class="chip member-chip" onclick="Members.filter('trial', this)">Trial (38)</div>
+          <div class="chip member-chip" onclick="Members.filter('expired', this)">Expired (144)</div>
+        </div>
+
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Member</th>
+                  <th>Phone</th>
+                  <th>Plan</th>
+                  <th>Trainer</th>
+                  <th>Joined</th>
+                  <th>Expires</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="members-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div><!-- /members -->
+
+
+      <!-- ═══════════════════════ TRAINERS ════════════ -->
+      <div class="page" id="page-trainers">
+
+        <div class="page-header">
+          <div class="page-header-left">
+            <h2>Trainers</h2>
+            <p>Our certified fitness professionals</p>
+          </div>
+          <button class="btn btn-primary" onclick="App.toast('Add Trainer — coming soon!')">+ Add Trainer</button>
+        </div>
+
+        <!-- Stats row -->
+        <div class="stats-grid mb-15">
+          <div class="stat-card">
+            <div class="stat-label">Total Trainers</div>
+            <div class="stat-value text-green">6</div>
+            <div class="stat-change up">All active</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Avg. Rating</div>
+            <div class="stat-value">4.75</div>
+            <div class="stat-change up">↑ 0.1 this month</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Total Classes</div>
+            <div class="stat-value">8</div>
+            <div class="stat-change">Per week</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Certifications</div>
+            <div class="stat-value text-blue">6</div>
+            <div class="stat-change">International certs</div>
+          </div>
+        </div>
+
+        <div class="grid-3" id="trainers-grid"></div>
+      </div><!-- /trainers -->
+
+
+      <!-- ═══════════════════════ SCHEDULE ════════════ -->
+      <div class="page" id="page-schedule">
+
+        <div class="page-header">
+          <div class="page-header-left">
+            <h2>Class Schedule</h2>
+            <p>Manage classes, bookings, and calendar</p>
+          </div>
+          <button class="btn btn-primary" onclick="App.toast('Add Class — coming soon!')">+ Add Class</button>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">April 2025 — Calendar</div>
+            </div>
+            <div class="schedule-grid" id="sched-grid"></div>
+            <div style="display:flex;gap:16px;margin-top:14px;font-size:12px;color:var(--text-muted)">
+              <span><span style="display:inline-block;width:12px;height:12px;background:var(--green);border-radius:50%;margin-right:5px;vertical-align:middle"></span>Today</span>
+              <span><span style="display:inline-block;width:12px;height:12px;background:var(--green-light);border-radius:3px;margin-right:5px;vertical-align:middle"></span>Class scheduled</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Today's classes</div>
+              <span class="badge badge-green">10 Apr 2025</span>
+            </div>
+            <div id="todays-classes"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">All classes — Booking status</div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Class</th>
+                  <th>Trainer</th>
+                  <th>Time</th>
+                  <th>Duration</th>
+                  <th>Capacity</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="bookings-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div><!-- /schedule -->
+
+
+      <!-- ═══════════════════════ PLANS ════════════════ -->
+      <div class="page" id="page-plans">
+
+        <div class="page-header">
+          <div class="page-header-left">
+            <h2>Plans &amp; Pricing</h2>
+            <p>Membership tiers and subscription management</p>
+          </div>
+          <button class="btn btn-primary" onclick="App.toast('New Plan — coming soon!')">+ New Plan</button>
+        </div>
+
+        <div class="grid-3" id="plans-grid"></div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Plan performance</div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Plan</th>
+                  <th>Members</th>
+                  <th>Revenue / month</th>
+                  <th>Retention</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="plan-perf-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div><!-- /plans -->
+
+
+      <!-- ═══════════════════════ PAYMENTS ════════════ -->
+      <div class="page" id="page-payments">
+
+        <div class="page-header">
+          <div class="page-header-left">
+            <h2>Payments</h2>
+            <p>Track all transactions and dues</p>
+          </div>
+          <button class="btn btn-primary" onclick="App.toast('Export report downloading…')">⬇ Export</button>
+        </div>
+
+        <div class="stats-grid" style="grid-template-columns:repeat(3,1fr)">
+          <div class="stat-card">
+            <div class="stat-label">Collected this month</div>
+            <div class="stat-value text-green" id="pay-collected">₹4,09,300</div>
+            <div class="stat-change up">↑ 22% MoM</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Pending / Overdue</div>
+            <div class="stat-value text-coral" id="pay-pending">₹38,400</div>
+            <div class="stat-change down">Needs follow-up</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">UPI vs Cash vs Card</div>
+            <div class="stat-value">58% · 28% · 14%</div>
+            <div class="stat-change">Digital payments growing</div>
+          </div>
+        </div>
+
+        <div class="filter-chips">
+          <div class="chip pay-chip active" onclick="Payments.filterByStatus('all',this)">All</div>
+          <div class="chip pay-chip" onclick="Payments.filterByStatus('paid',this)">Paid</div>
+          <div class="chip pay-chip" onclick="Payments.filterByStatus('pending',this)">Pending</div>
+          <div class="chip pay-chip" onclick="Payments.filterByStatus('overdue',this)">Overdue</div>
+        </div>
+
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Member</th>
+                  <th>Plan</th>
+                  <th>Amount</th>
+                  <th>Method</th>
+                  <th>Date</th>
+                  <th>Transaction ID</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="payments-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div><!-- /payments -->
+
+
+      <!-- ═══════════════════════ REPORTS ═════════════ -->
+      <div class="page" id="page-reports">
+
+        <div class="page-header">
+          <div class="page-header-left">
+            <h2>Reports &amp; Analytics</h2>
+            <p>Business insights and performance metrics</p>
+          </div>
+          <button class="btn btn-primary" onclick="App.toast('Generating PDF report…')">⬇ Download PDF</button>
+        </div>
+
+        <div class="tab-bar">
+          <div class="tab report-tab active" onclick="Reports.switchTab('overview',this)">Overview</div>
+          <div class="tab report-tab" onclick="Reports.switchTab('attendance',this)">Attendance</div>
+          <div class="tab report-tab" onclick="Reports.switchTab('revenue',this)">Revenue</div>
+        </div>
+
+        <!-- Overview tab -->
+        <div id="report-overview">
+          <div class="grid-4 mb-15" id="report-metrics"></div>
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-header"><div class="card-title">Top performing trainers</div></div>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Trainer</th><th>Members</th><th>Rating</th><th>Revenue</th></tr></thead>
+                  <tbody id="top-trainers-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header"><div class="card-title">Member goals breakdown</div></div>
+              <div style="display:flex;flex-direction:column;gap:14px" id="member-goals"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Attendance tab -->
+        <div id="report-attendance" style="display:none">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Weekly attendance — April 2025</div>
+              <span class="badge badge-green">Avg. 207/day</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:12px" id="attendance-bars"></div>
+          </div>
+        </div>
+
+        <!-- Revenue tab -->
+        <div id="report-revenue" style="display:none">
+          <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:1.25rem">
+            <div class="stat-card">
+              <div class="stat-label">Q1 Revenue</div>
+              <div class="stat-value text-green">₹11.2L</div>
+              <div class="stat-change up">↑ 14% YoY</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Avg. Revenue / Member</div>
+              <div class="stat-value">₹2,450</div>
+              <div class="stat-change up">↑ 6%</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Outstanding</div>
+              <div class="stat-value text-coral">₹38,400</div>
+              <div class="stat-change down">Needs follow-up</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Revenue breakdown by source</div></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Revenue source</th><th>Amount</th><th>Share</th></tr></thead>
+                <tbody id="revenue-breakdown"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /reports -->
+
+
+      <!-- ═══════════════════════ SETTINGS ════════════ -->
+      <div class="page" id="page-settings">
+
+        <div class="page-header">
+          <div class="page-header-left">
+            <h2>Settings</h2>
+            <p>Gym configuration and Naan Mudhalvan project details</p>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <!-- Gym Info -->
+          <div class="card">
+            <div class="card-header"><div class="card-title">🏋️ Gym information</div></div>
+            <div class="form-section">
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label class="form-label">Gym name</label>
+                  <input class="form-control" type="text" value="FitnessHub Chennai">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Phone</label>
+                  <input class="form-control" type="text" value="+91 99400 12345">
+                </div>
+              </div>
+              <div class="form-group" style="margin-bottom:14px">
+                <label class="form-label">Address</label>
+                <input class="form-control" type="text" value="Anna Nagar, Chennai - 600040">
+              </div>
+              <div class="form-group" style="margin-bottom:14px">
+                <label class="form-label">Email</label>
+                <input class="form-control" type="email" value="admin@fitnesshub.in">
+              </div>
+              <div class="form-group" style="margin-bottom:14px">
+                <label class="form-label">Website</label>
+                <input class="form-control" type="text" value="www.fitnesshub.in">
+              </div>
+              <div class="form-group" style="margin-bottom:14px">
+                <label class="form-label">Operating hours</label>
+                <input class="form-control" type="text" value="Mon–Sat: 5AM–10PM, Sun: 6AM–8PM">
+              </div>
+              <button class="btn btn-primary" onclick="App.toast('Gym info saved successfully!')">Save changes</button>
+            </div>
+          </div>
+
+          <!-- Naan Mudhalvan Details -->
+          <div>
+            <div class="card mb-1">
+              <div class="card-header"><div class="card-title">◆ Naan Mudhalvan project details</div></div>
+              <div class="form-section">
+                <div class="form-group" style="margin-bottom:14px">
+                  <label class="form-label">Institute / College name <span class="form-required">*</span></label>
+                  <input class="form-control" type="text" placeholder="Enter your college name">
+                </div>
+                <div class="form-grid-2">
+                  <div class="form-group">
+                    <label class="form-label">District</label>
+                    <select class="form-control">
+                      <option>Chennai</option><option>Coimbatore</option><option>Madurai</option>
+                      <option>Salem</option><option>Trichy</option><option>Tirunelveli</option>
+                      <option>Vellore</option><option>Erode</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Batch / Year</label>
+                    <input class="form-control" type="text" value="2024–25">
+                  </div>
+                </div>
+                <div class="form-grid-2">
+                  <div class="form-group">
+                    <label class="form-label">Participant ID</label>
+                    <input class="form-control" type="text" placeholder="NM-XXXXX">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Course / Domain</label>
+                    <input class="form-control" type="text" value="Full Stack Web Development">
+                  </div>
+                </div>
+                <div class="form-group" style="margin-bottom:14px">
+                  <label class="form-label">Faculty mentor</label>
+                  <input class="form-control" type="text" placeholder="Mentor name">
+                </div>
+                <div class="form-group" style="margin-bottom:14px">
+                  <label class="form-label">Project description</label>
+                  <textarea class="form-control">FitnessHub CRM is a complete gym management system built using HTML, CSS and JavaScript. It includes member management, trainer profiles, class scheduling, payment tracking, and business analytics.</textarea>
+                </div>
+                <button class="btn btn-primary" onclick="App.toast('Naan Mudhalvan details saved!')">Save details</button>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header"><div class="card-title">📋 About this project</div></div>
+              <div style="font-size:13px;color:var(--text-secondary);line-height:1.8">
+                <p><strong>Project:</strong> FitnessHub CRM</p>
+                <p><strong>Tech stack:</strong> HTML5, CSS3, Vanilla JavaScript (ES6+)</p>
+                <p><strong>Features:</strong> 8 modules — Dashboard, Members, Trainers, Schedule, Plans, Payments, Reports, Settings</p>
+                <p><strong>Program:</strong> Naan Mudhalvan — Government of Tamil Nadu</p>
+                <p style="margin-top:10px;padding:10px;background:var(--green-light);border-radius:var(--radius-md);color:#085041">
+                  ✓ No frameworks · ✓ No backend needed · ✓ Works offline · ✓ Mobile responsive
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /settings -->
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+
+<!-- ═══════════════════════════════════════
+     ADD MEMBER MODAL
+════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Add new member</div>
+      <button class="close-btn" onclick="App.closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-section">
+        <div class="form-section-title">Personal info</div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label">First name <span class="form-required">*</span></label>
+            <input class="form-control" type="text" id="fm-first" placeholder="e.g. Arjun">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last name</label>
+            <input class="form-control" type="text" id="fm-last" placeholder="e.g. Krishnan">
+          </div>
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label">Phone <span class="form-required">*</span></label>
+            <input class="form-control" type="text" id="fm-phone" placeholder="+91 XXXXX XXXXX">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input class="form-control" type="email" id="fm-email" placeholder="member@email.com">
+          </div>
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label">Age</label>
+            <input class="form-control" type="number" id="fm-age" placeholder="25" min="16" max="80">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Gender</label>
+            <select class="form-control" id="fm-gender">
+              <option>Male</option><option>Female</option><option>Other</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">Membership plan</div>
+        <div id="modal-plans"></div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">Training details</div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label">Assign trainer</label>
+            <select class="form-control" id="fm-trainer">
+              <option>Priya Kumar</option>
+              <option>Ravi Shankar</option>
+              <option>Meera Anand</option>
+              <option>Suresh Babu</option>
+              <option>Lakshmi R</option>
+              <option>Karthik M</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Fitness goal</label>
+            <select class="form-control" id="fm-goal">
+              <option>Weight loss</option>
+              <option>Muscle gain</option>
+              <option>Flexibility</option>
+              <option>General fitness</option>
+              <option>Stress relief</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="App.closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="Members.addMember()">Add Member</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Toast Notification -->
+<div class="toast" id="toast"></div>
+
+<!-- Scripts — order matters -->
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/modules.js"></script>
+
+</body>
+</html>
